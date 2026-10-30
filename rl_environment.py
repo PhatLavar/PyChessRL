@@ -27,3 +27,25 @@ class ChessEnvironment:
             self.game_state.move.executor.handle_pawn_promotion(promotion)
 
         return self.game_state
+
+    def legal_actions(self):
+        if self.game_state.game_over:
+            return []
+
+        actions = []
+
+        for origin, target in self.game_state.move.get_valid_moves():
+            piece = self.game_state.board.get_piece(origin)
+            promotion_choices = ("Q", )  #tuple "Q", default value
+
+            if piece[1] == "P" and target[0] in (0, 7):
+                promotion_choices = ("Q", "R", "B", "N")
+
+            for promotion in promotion_choices:
+                actions.append((origin, target, promotion))
+
+        return actions
+
+
+
+    
