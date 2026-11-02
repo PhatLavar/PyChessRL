@@ -10,17 +10,35 @@ def play_game(max_plies=256):
     black_agent = RandomAgent()
 
     plies = 0
+    trajectory = []
 
     while not env.game_state.game_over and plies < max_plies:
         if env.game_state.white_to_move:
             agent = white_agent
+            player = "white"
         else:
             agent = black_agent
+            player = "black"
 
+        legal_actions = env.legal_actions()
         action = agent.choose_action(env.legal_actions())
-        origin, target, promotion = action
 
+        board_before = tuple(
+            tuple(row)
+            for row in env.game_state.board.board
+        )
+
+        origin, target, promotion = action
         env.step(origin, target, promotion)
+        
+        decision = {
+            "player": player,
+            "board_before": board_before,
+            "legal_actions": legal_actions,
+            "action": action,
+        }
+
+        trajectory.append(decision)
         plies += 1
 
     return {
@@ -30,6 +48,7 @@ def play_game(max_plies=256):
         "reason": env.game_state.game_result or "move_limit",
         "winner": env.game_state.winner,
         "rewards": env.terminal_rewards(),
+        "trajectory": trajectory,
     }
 
 if __name__ == "__main__":
