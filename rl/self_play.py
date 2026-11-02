@@ -29,6 +29,7 @@ def play_game(max_plies=256):
         "truncated": not env.game_state.game_over,
         "reason": env.game_state.game_result or "move_limit",
         "winner": env.game_state.winner,
+        "rewards": env.terminal_reward(),
     }
 
 if __name__ == "__main__":

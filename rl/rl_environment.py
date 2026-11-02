@@ -46,6 +46,17 @@ class ChessEnvironment:
 
         return actions
 
+    def terminal_rewards(self):
+        if not self.game_state.game_over:
+            return None
+        
+        if self.game_state.winner == "WHITE WINS!":
+            return {"white": 1.0, "black": -1.0}
+        if self.game_state.winner == "BLACK WINS!":
+            return {"white": -1.0, "black": 1.0}
+
+        return {"white": 0.0, "black": 0.0}
+
 
 
     
