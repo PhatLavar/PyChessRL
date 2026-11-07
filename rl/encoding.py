@@ -19,6 +19,22 @@ def encode_board(board):
 
     return encoded
 
+def encode_castling_rights(game_state):
+    rights = game_state.castling_rights
+
+    right_values = (
+        rights["w"]["king_side"],
+        rights["w"]["queen_side"],
+        rights["b"]["king_side"],
+        rights["b"]["queen_side"],
+    )
+
+    planes = torch.zeros((4, 8, 8), dtype=torch.float32)
+    for index, value in enumerate(right_values):
+        planes[index] = float(value)
+
+    return planes
+
 def encode_observation(game_state):
     piece_planes = encode_board(game_state.board.board)
     
@@ -29,4 +45,9 @@ def encode_observation(game_state):
         dtype=torch.float32,
     )
 
-    return torch.cat((piece_planes, turn_plane), dim=0)
+    castling_planes = encode_castling_rights(game_state)
+
+    return torch.cat(
+        (piece_planes, turn_plane, castling_planes),
+        dim=0,
+    )
