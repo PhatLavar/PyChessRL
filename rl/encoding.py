@@ -18,3 +18,15 @@ def encode_board(board):
             encoded[plane, row_index, column_index] = 1.0
 
     return encoded
+
+def encode_observation(game_state):
+    piece_planes = encode_board(game_state.board.board)
+    
+    turn_value = float(game_state.white_to_move)
+    turn_plane = torch.full(
+        (1, 8, 8),
+        turn_value,
+        dtype=torch.float32,
+    )
+
+    return torch.cat((piece_planes, turn_plane), dim=0)
