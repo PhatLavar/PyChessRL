@@ -35,6 +35,16 @@ def encode_castling_rights(game_state):
 
     return planes
 
+def encode_en_passant(game_state):
+    plane = torch.zeros((1, 8, 8), dtype=torch.float32)
+    target = game_state.en_passant_target
+
+    if target is not None:
+        row, column = target
+        plane[0, row, column] = 1.0
+
+    return plane
+
 def encode_observation(game_state):
     piece_planes = encode_board(game_state.board.board)
     
@@ -46,8 +56,14 @@ def encode_observation(game_state):
     )
 
     castling_planes = encode_castling_rights(game_state)
+    en_passant_plane = encode_en_passant(game_state)
 
     return torch.cat(
-        (piece_planes, turn_plane, castling_planes),
+        (
+            piece_planes,
+            turn_plane,
+            castling_planes,
+            en_passant_plane
+        ),
         dim=0,
     )
