@@ -1,5 +1,7 @@
 from rl.rl_environment import ChessEnvironment
 from rl.random_agent import RandomAgent
+from rl.encoding import encode_observation
+
 
 def play_game(max_plies=256):
     if max_plies < 1:
@@ -20,8 +22,9 @@ def play_game(max_plies=256):
             agent = black_agent
             player = "black"
 
+        observation = encode_observation(env.game_state)
         legal_actions = env.legal_actions()
-        action = agent.choose_action(env.legal_actions())
+        action = agent.choose_action(legal_actions)
 
         board_before = tuple(
             tuple(row)
@@ -33,6 +36,7 @@ def play_game(max_plies=256):
         
         decision = {
             "player": player,
+            "observation": observation,
             "board_before": board_before,
             "legal_actions": legal_actions,
             "action": action,
