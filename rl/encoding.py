@@ -45,6 +45,16 @@ def encode_en_passant(game_state):
 
     return plane
 
+def encode_halfmove_clock(game_state):
+    rule = game_state.fifty_move_rule
+    normalized_clock = rule.halfmove_clock / rule.REQUIRED_HALF_MOVES
+
+    return torch.full(
+        (1, 8, 8),
+        normalized_clock,
+        dtype=torch.float32,
+    )
+
 def encode_observation(game_state):
     piece_planes = encode_board(game_state.board.board)
     
@@ -57,13 +67,15 @@ def encode_observation(game_state):
 
     castling_planes = encode_castling_rights(game_state)
     en_passant_plane = encode_en_passant(game_state)
+    clock_plane = encode_halfmove_clock(game_state)
 
     return torch.cat(
         (
             piece_planes,
             turn_plane,
             castling_planes,
-            en_passant_plane
+            en_passant_plane,
+            clock_plane
         ),
         dim=0,
     )
